@@ -1,0 +1,87 @@
+{% extends "reader/base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-user-circle" style="color:var(--primary-light);"></i> My Profile</h1>
+</div>
+<div class="page-content">
+    {% if success %}
+    <div class="alert alert-success"><i class="fas fa-check-circle"></i> {{ success }}</div>
+    {% endif %}
+
+    {% if profile_user %}
+    <div class="grid-2">
+        <div class="card">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-header mb-3">
+                    <div class="profile-avatar">{{ profile_user.name|first }}</div>
+                    <div class="profile-info">
+                        <h2>{{ profile_user.name }}</h2>
+                        <p class="username">@{{ profile_user.username }}</p>
+                        <p style="font-size:0.85rem;color:var(--text-muted);">{{ profile_user.email }}</p>
+                        <span class="badge badge-primary mt-1">{{ profile_user.role }}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name">Display Name</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ profile_user.name }}">
+                </div>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" class="form-control" rows="3"
+                        placeholder="Tell us about yourself..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="profile_image">Profile Image</label>
+                    <input type="file" id="profile_image" name="profile_image" class="form-control" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Profile</button>
+            </form>
+        </div>
+
+        <div>
+            <!-- Upgrade to Author -->
+            {% if not is_author and profile_user.role == 'reader' %}
+            <div class="card mb-3">
+                <h4 style="margin-bottom:12px;"><i class="fas fa-pen-nib" style="color:var(--accent-orange);"></i>
+                    Become an Author</h4>
+                <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:16px;">Upgrade your account to start
+                    writing and publishing your own blog posts!</p>
+                <form method="POST" action="/reader/upgrade-to-author/">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="author_bio">Your Author Bio</label>
+                        <textarea id="author_bio" name="bio" class="form-control" rows="3"
+                            placeholder="Tell readers about yourself..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-rocket"></i> Upgrade to
+                        Author</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- Quick Stats -->
+            <div class="card">
+                <h4 style="margin-bottom:16px;"><i class="fas fa-chart-bar"></i> Your Activity</h4>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+                    <a href="/reader/liked/"
+                        style="background:var(--bg-glass);padding:16px;border-radius:var(--radius-sm);text-align:center;text-decoration:none;display:block;transition:transform 0.2s;border:1px solid transparent;hover:border-var(--primary-light);">
+                        <div style="font-size:1.5rem;font-weight:800;color:var(--primary-light);">{{ liked_count|default:"0" }}</div>
+                        <div style="font-size:0.8rem;color:var(--text-muted);">Liked</div>
+                    </a>
+                    <a href="/reader/bookmarks/"
+                        style="background:var(--bg-glass);padding:16px;border-radius:var(--radius-sm);text-align:center;text-decoration:none;display:block;transition:transform 0.2s;border:1px solid transparent;hover:border-var(--accent-orange);">
+                        <div style="font-size:1.5rem;font-weight:800;color:var(--accent-orange);">{{ bookmarks_count|default:"0" }}</div>
+                        <div style="font-size:0.8rem;color:var(--text-muted);">Bookmarks</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info"><i class="fas fa-info-circle"></i> Please <a href="/accounts/login/">sign in</a> to
+        view your profile.</div>
+    {% endif %}
+</div>
+{% endblock %}

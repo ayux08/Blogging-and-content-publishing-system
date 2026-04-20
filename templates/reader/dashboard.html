@@ -1,0 +1,161 @@
+{% extends "reader/base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-home" style="color:var(--primary-light);"></i> Welcome{% if user_name %}, {{ user_name }}{% endif %}</h1>
+    <p style="color:var(--text-muted);">Discover the latest stories from our creators</p>
+</div>
+<div class="page-content">
+    {% if user_id %}
+    <div class="grid-4 mb-4">
+        <div class="stat-card animate-fadeInUp stagger-1">
+            <div class="stat-icon pink"><i class="fas fa-heart"></i></div>
+            <div class="stat-info">
+                <h4>{{ liked_count|default:"0" }}</h4>
+                <p>Posts Liked</p>
+            </div>
+        </div>
+        <div class="stat-card animate-fadeInUp stagger-2">
+            <div class="stat-icon orange"><i class="fas fa-bookmark"></i></div>
+            <div class="stat-info">
+                <h4>{{ bookmarks_count|default:"0" }}</h4>
+                <p>Bookmarks</p>
+            </div>
+        </div>
+        <div class="stat-card animate-fadeInUp stagger-3">
+            <div class="stat-icon cyan"><i class="fas fa-comments"></i></div>
+            <div class="stat-info">
+                <h4>{{ comments_count|default:"0" }}</h4>
+                <p>Comments</p>
+            </div>
+        </div>
+        <div class="stat-card animate-fadeInUp stagger-4">
+            <div class="stat-icon purple"><i class="fas fa-user-friends"></i></div>
+            <div class="stat-info">
+                <h4>{{ followed_count|default:"0" }}</h4>
+                <p>Following</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6.3.2 - Followed Authors Section -->
+    {% if followed_authors %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4><i class="fas fa-user-friends" style="color:var(--primary-light);"></i> Authors You Follow</h4>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;padding:8px 0;">
+            {% for author in followed_authors %}
+            <a href="/reader/user/{{ author.user_id.username }}/"
+                style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg-glass);border:1px solid var(--border-color);border-radius:var(--radius-full);text-decoration:none;transition:all 0.2s;">
+                <div
+                    style="width:32px;height:32px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:0.8rem;">
+                    {{ author.user_id.name|first }}</div>
+                <span style="color:var(--text-primary);font-size:0.88rem;font-weight:500;">{{ author.user_id.name }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Posts From Followed Authors -->
+    {% if followed_posts %}
+    <div class="mb-4">
+        <div class="section-header" style="margin-bottom:16px;">
+            <h3><i class="fas fa-rss" style="color:var(--accent-cyan);"></i> From Authors You Follow</h3>
+        </div>
+        <div class="grid-3">
+            {% for post in followed_posts %}
+            <div class="post-card animate-fadeInUp">
+                <div class="post-card-image">
+                    {% if post.featured_image %}
+                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                    {% else %}
+                    <div
+                        style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter|add:180 }}, 60%, 30%), hsl({{ forloop.counter|add:220 }}, 50%, 20%));display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-feather-alt" style="font-size:2.5rem;color:rgba(255,255,255,0.15);"></i>
+                    </div>
+                    {% endif %}
+                    <span class="category-badge">{{ post.category_id.name }}</span>
+                </div>
+                <div class="post-card-body">
+                    <h3><a href="/reader/blog/{{ post.id }}/">{{ post.title }}</a></h3>
+                    <p class="excerpt">{{ post.excerpt|default:post.content|truncatewords:20 }}</p>
+                    <div class="post-card-meta">
+                        <div class="post-card-author">
+                            <div class="avatar-sm">{{ post.author_id.user_id.name|first }}</div>
+                            <a href="/reader/user/{{ post.author_id.user_id.username }}/"
+                                style="color:var(--text-muted);font-size:0.82rem;">{{ post.author_id.user_id.name }}</a>
+                        </div>
+                        <div class="post-card-stats">
+                            <span><i class="fas fa-heart"></i> {{ post.like_count }}</span>
+                            <span><i class="fas fa-comment"></i> {{ post.comment_count }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    <!-- Category Pills -->
+    {% if categories %}
+    <div class="filter-tabs mb-3">
+        <a href="/reader/browse/" class="filter-tab active">All</a>
+        {% for cat in categories %}
+        <a href="/reader/browse/?category={{ cat.id }}" class="filter-tab">{{ cat.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Recent Posts Grid -->
+    <div class="section-header" style="margin-bottom:16px;">
+        <h3><i class="fas fa-fire" style="color:var(--accent-orange);"></i> Latest Stories</h3>
+    </div>
+    {% if recent_posts %}
+    <div class="grid-3">
+        {% for post in recent_posts %}
+        <div class="post-card animate-fadeInUp">
+            <div class="post-card-image">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                {% else %}
+                <div
+                    style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter|add:200 }}, 60%, 30%), hsl({{ forloop.counter|add:250 }}, 50%, 20%));display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-feather-alt" style="font-size:2.5rem;color:rgba(255,255,255,0.15);"></i>
+                </div>
+                {% endif %}
+                <span class="category-badge">{{ post.category_id.name }}</span>
+            </div>
+            <div class="post-card-body">
+                <h3><a href="/reader/blog/{{ post.id }}/">{{ post.title }}</a></h3>
+                <p class="excerpt">{{ post.excerpt|default:post.content|truncatewords:20 }}</p>
+                <div class="post-card-meta">
+                    <div class="post-card-author">
+                        <div class="avatar-sm">{{ post.author_id.user_id.name|first }}</div>
+                        <a href="/reader/user/{{ post.author_id.user_id.username }}/"
+                            style="color:var(--text-muted);font-size:0.82rem;">{{ post.author_id.user_id.name }}</a>
+                    </div>
+                    <div class="post-card-stats">
+                        <span><i class="fas fa-heart"></i> {{ post.like_count }}</span>
+                        <span><i class="fas fa-comment"></i> {{ post.comment_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+        <a href="/reader/browse/" class="btn btn-secondary btn-lg"><i class="fas fa-compass"></i> Browse All Posts</a>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="fas fa-book-open"></i></div>
+        <h3>No posts yet</h3>
+        <p>Check back soon for new content from our authors!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

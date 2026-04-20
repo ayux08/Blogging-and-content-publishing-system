@@ -1,0 +1,142 @@
+{% extends "admin_zone/base.html" %}
+{% block title %}Tags Management{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-hashtag" style="color:var(--primary-light);"></i> Tags Management</h1>
+    <p style="color:var(--text-muted);">Create, edit, and manage content tags (6.1.4)</p>
+</div>
+
+<div class="page-content">
+    <div class="grid-2">
+        <!-- Add Tag Form -->
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-plus-circle"></i> Add New Tag</h4>
+            </div>
+            <form method="POST" id="add-tag-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add">
+                <div class="form-group">
+                    <label for="tag_name">Tag Name</label>
+                    <input type="text" name="tag_name" id="tag_name" class="form-control"
+                        placeholder="e.g. python, webdev, tutorial" required>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Tag</button>
+            </form>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-chart-bar"></i> Tag Statistics</h4>
+            </div>
+            <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                <div class="stat-card" style="flex:1;min-width:120px;">
+                    <div class="stat-icon purple"><i class="fas fa-hashtag"></i></div>
+                    <div class="stat-info">
+                        <h4>{{ tags|length }}</h4>
+                        <p>Total Tags</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tags List -->
+    <div class="card mt-3">
+        <div class="card-header">
+            <h4><i class="fas fa-list"></i> All Tags</h4>
+        </div>
+        {% if tags %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tag Name</th>
+                        <th>Posts Using</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tag in tags %}
+                    <tr id="tag-row-{{ tag.id }}">
+                        <td>{{ tag.id }}</td>
+                        <td>
+                            <span class="badge badge-primary" style="padding:6px 14px;font-size:0.85rem;">
+                                <i class="fas fa-hashtag"></i> {{ tag.name }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-info">{{ tag.post_count }} post{{ tag.post_count|pluralize }}</span>
+                        </td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button class="btn btn-sm btn-secondary"
+                                    onclick="editTag({{ tag.id }}, '{{ tag.name }}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <form method="POST" action="/admin_zone/tags/delete/{{ tag.id }}/"
+                                    style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Delete tag #{{ tag.name }}?')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon"><i class="fas fa-hashtag"></i></div>
+            <h3>No tags yet</h3>
+            <p>Create your first tag using the form above.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="edit-modal"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+    <div class="card" style="max-width:440px;width:90%;margin:auto;">
+        <div class="card-header">
+            <h4><i class="fas fa-edit"></i> Edit Tag</h4>
+            <button class="btn btn-sm btn-ghost" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit">
+            <input type="hidden" name="tag_id" id="edit-tag-id">
+            <div class="form-group">
+                <label for="edit-tag-name">Tag Name</label>
+                <input type="text" name="tag_name" id="edit-tag-name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function editTag(id, name) {
+        document.getElementById('edit-tag-id').value = id;
+        document.getElementById('edit-tag-name').value = name;
+        document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    document.getElementById('edit-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeEditModal();
+    });
+</script>
+{% endblock %}

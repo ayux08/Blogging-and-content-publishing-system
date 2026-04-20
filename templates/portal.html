@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Blogverse - A modern blogging and content publishing platform. Create, share, and discover amazing stories.">
+    <title>Blogverse — Discover Amazing Stories</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+
+        <!-- Navbar for portal -->
+        <nav class="navbar" style="background: transparent; border-bottom: none; position: absolute; top: 0;">
+            <div class="navbar-inner">
+                <a href="/" class="navbar-brand">
+                    <div class="brand-icon">B</div>
+                    Blog<span class="highlight">verse</span>
+                </a>
+                <ul class="navbar-nav">
+                    <li><a href="#featured">Explore</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="/accounts/login/" class="btn btn-secondary btn-sm">Sign In</a></li>
+                    <li><a href="/accounts/register/" class="btn btn-primary btn-sm">Get Started</a></li>
+                </ul>
+                <button class="nav-toggle" onclick="document.querySelector('.navbar-nav').classList.toggle('show')">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="hero-content animate-fadeInUp">
+            <h1>Share Your Story<br>with the <span>World</span></h1>
+            <p>Blogverse is a modern content publishing platform where creators write, readers discover, and ideas come
+                alive.</p>
+            <div class="hero-buttons">
+                <a href="/accounts/register/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-rocket"></i> Start Writing
+                </a>
+                <a href="/reader/browse/" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-compass"></i> Explore Posts
+                </a>
+            </div>
+            <div class="hero-stats animate-fadeInUp stagger-2">
+                <div class="hero-stat">
+                    <h3>{{ total_posts|default:"0" }}+</h3>
+                    <p>Published Articles</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>{{ total_authors|default:"0" }}+</h3>
+                    <p>Active Authors</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>{{ total_readers|default:"0" }}+</h3>
+                    <p>Happy Readers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Posts Section -->
+    <section class="featured-section" id="featured">
+        <div class="container">
+            <div class="section-header animate-fadeInUp">
+                <h2>Latest Stories</h2>
+                <p>Discover fresh perspectives from our talented community of writers</p>
+            </div>
+            {% if featured_posts %}
+            <div class="grid-3">
+                {% for post in featured_posts %}
+                <div class="post-card animate-fadeInUp stagger-{{ forloop.counter }}">
+                    <div class="post-card-image">
+                        {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                        {% else %}
+                        <div
+                            style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter|add:200 }}, 60%, 30%), hsl({{ forloop.counter|add:240 }}, 50%, 20%));display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-feather-alt" style="font-size:2.5rem;color:rgba(255,255,255,0.2);"></i>
+                        </div>
+                        {% endif %}
+                        <span class="category-badge">{{ post.category_id.name }}</span>
+                    </div>
+                    <div class="post-card-body">
+                        <h3><a href="/reader/blog/{{ post.id }}/">{{ post.title }}</a></h3>
+                        <p class="excerpt">{{ post.excerpt|default:post.content|truncatewords:25 }}</p>
+                        <div class="post-card-meta">
+                            <div class="post-card-author">
+                                <div class="avatar-sm">{{ post.author_id.user_id.name|first }}</div>
+                                <span>{{ post.author_id.user_id.name }}</span>
+                            </div>
+                            <span>{{ post.created_at|date:"M d" }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <a href="/reader/browse/" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-arrow-right"></i> View All Posts
+                </a>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="icon"><i class="fas fa-pen-nib"></i></div>
+                <h3>No posts yet</h3>
+                <p>Be the first one to publish amazing content on Blogverse!</p>
+                <a href="/accounts/register/" class="btn btn-primary mt-2">Start Writing</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section style="padding: 80px 0;" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <h2>Browse by Category</h2>
+                <p>Find content that matches your interests</p>
+            </div>
+            <div class="grid-4">
+                {% for cat in categories %}
+                <a href="/reader/browse/?category={{ cat.id }}" class="card"
+                    style="text-align:center;text-decoration:none;cursor:pointer;">
+                    <div
+                        style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg, hsl({{ forloop.counter|add:220 }}, 60%, 40%), hsl({{ forloop.counter|add:260 }}, 50%, 30%));display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem;">
+                        {% if forloop.counter == 1 %}<i class="fas fa-microchip" style="color:white;"></i>
+                        {% elif forloop.counter == 2 %}<i class="fas fa-heart" style="color:white;"></i>
+                        {% elif forloop.counter == 3 %}<i class="fas fa-dumbbell" style="color:white;"></i>
+                        {% elif forloop.counter == 4 %}<i class="fas fa-wallet" style="color:white;"></i>
+                        {% elif forloop.counter == 5 %}<i class="fas fa-graduation-cap" style="color:white;"></i>
+                        {% elif forloop.counter == 6 %}<i class="fas fa-plane" style="color:white;"></i>
+                        {% elif forloop.counter == 7 %}<i class="fas fa-utensils" style="color:white;"></i>
+                        {% else %}<i class="fas fa-film" style="color:white;"></i>
+                        {% endif %}
+                    </div>
+                    <h4 style="font-size:1rem;margin-bottom:4px;">{{ cat.name }}</h4>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: 80px 0; background: var(--bg-secondary);">
+        <div class="container text-center">
+            <h2 style="margin-bottom:16px;">Ready to Share Your Voice?</h2>
+            <p style="max-width:500px;margin:0 auto 32px;color:var(--text-muted);">Join thousands of creators and start
+                publishing your stories today. It's free and takes less than a minute.</p>
+            <div class="hero-buttons">
+                <a href="/accounts/register/" class="btn btn-primary btn-lg"><i class="fas fa-user-plus"></i> Create
+                    Account</a>
+                <a href="/accounts/login/" class="btn btn-secondary btn-lg"><i class="fas fa-sign-in-alt"></i> Sign
+                    In</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Blog<span style="color:var(--primary-light)">verse</span></h3>
+                    <p>A modern blogging and content publishing platform built for creators, editors, and readers.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="/reader/browse/">Browse Posts</a></li>
+                        <li><a href="/accounts/register/">Start Writing</a></li>
+                        <li><a href="/accounts/contact/">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Zones</h4>
+                    <ul>
+                        <li><a href="/reader/">Reader Zone</a></li>
+                        <li><a href="/author/">Author Zone</a></li>
+                        <li><a href="/admin_zone/">Admin Zone</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Account</h4>
+                    <ul>
+                        <li><a href="/accounts/login/">Sign In</a></li>
+                        <li><a href="/accounts/register/">Register</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong></span>
+                <span>Blogging & Content Publishing System</span>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

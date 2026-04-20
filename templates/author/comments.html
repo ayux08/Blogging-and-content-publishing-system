@@ -1,0 +1,45 @@
+{% extends "author/base.html" %}
+{% block title %}Comments on My Posts{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-comments" style="color:var(--primary-light);"></i> Comments on My Posts</h1>
+    <p style="color:var(--text-muted);">View and respond to reader comments</p>
+</div>
+<div class="page-content">
+    {% if comments %}
+    <div class="card">
+        {% for comment in comments %}
+        <div class="comment-item">
+            <div class="comment-avatar">{{ comment.user_id.name|first }}</div>
+            <div class="comment-body">
+                <div class="comment-header">
+                    <span class="name">{{ comment.user_id.name }}</span>
+                    <span class="date">on <a href="/reader/blog/{{ comment.post_id.id }}/">{{ comment.post_id.title|truncatechars:30 }}</a></span>
+                    <span class="date">· {{ comment.created_at|date:"M d, Y" }}</span>
+                </div>
+                <p class="comment-text">{{ comment.comment_text }}</p>
+                <!-- Reply Form -->
+                <details style="margin-top:8px;">
+                    <summary style="cursor:pointer;color:var(--primary-light);font-size:0.85rem;"><i
+                            class="fas fa-reply"></i> Reply</summary>
+                    <form method="POST" action="/author/comment/reply/{{ comment.id }}/" style="margin-top:8px;"
+                        class="flex gap-2">
+                        {% csrf_token %}
+                        <input type="text" name="reply_text" class="form-control" placeholder="Write a reply..."
+                            required style="flex:1;">
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </details>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="fas fa-comments"></i></div>
+        <h3>No comments yet</h3>
+        <p>When readers comment on your posts, they'll appear here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

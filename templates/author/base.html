@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Author Zone{% endblock %} — Blogverse</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="/author/" class="navbar-brand">
+                <div class="brand-icon">B</div>
+                Blog<span class="highlight">verse</span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="/author/" class="{% if page == 'dashboard' %}active{% endif %}"><i class="fas fa-home"></i>
+                        Dashboard</a></li>
+                <li><a href="/author/create/" class="{% if page == 'create' %}active{% endif %}"><i
+                            class="fas fa-plus-circle"></i> New Post</a></li>
+                <li><a href="/author/posts/" class="{% if page == 'posts' %}active{% endif %}"><i
+                            class="fas fa-newspaper"></i> My Posts</a></li>
+                <li><a href="/author/drafts/" class="{% if page == 'drafts' %}active{% endif %}"><i
+                            class="fas fa-file-alt"></i> Drafts</a></li>
+                <li><a href="/author/status/" class="{% if page == 'status' %}active{% endif %}"><i
+                            class="fas fa-clock"></i> Status</a></li>
+                <li><a href="/author/comments/" class="{% if page == 'comments' %}active{% endif %}"><i
+                            class="fas fa-comments"></i> Comments</a></li>
+
+                <li>
+                    <a href="/reader/notifications/" style="position:relative;">
+                        <i class="fas fa-bell"></i>
+                        {% if notif_count %}<span class="nav-badge">{{ notif_count }}</span>{% endif %}
+                    </a>
+                </li>
+                <li class="nav-profile">
+                    <div class="nav-profile-btn">
+                        <div class="avatar">{{ user_name|first }}</div>
+                        <span>{{ user_name }}</span>
+                        <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+                    </div>
+                    <div class="nav-dropdown">
+                        <a href="/author/profile/"><i class="fas fa-user-circle"></i> My Profile</a>
+                        <a href="/reader/"><i class="fas fa-book-reader"></i> Reader Mode</a>
+                        <div class="divider"></div>
+                        <a href="/accounts/logout/" class="danger"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                    </div>
+                </li>
+            </ul>
+            <button class="nav-toggle" onclick="document.querySelector('.navbar-nav').classList.toggle('show')">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <div class="container-wide">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="padding:18px 0;">
+                <span>&copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong></span>
+                <span>Blogging & Content Publishing System</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/custom-select.js' %}?v=3"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

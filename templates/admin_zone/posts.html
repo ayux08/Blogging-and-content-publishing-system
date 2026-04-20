@@ -1,0 +1,114 @@
+{% extends "admin_zone/base.html" %}
+{% block title %}Post Approval{% endblock %}
+{% block topbar_title %}Post Approval{% endblock %}
+{% block topbar_breadcrumb %}/ Admin{% endblock %}
+{% block content %}
+<div class="admin-section-card">
+    <div class="admin-section-header">
+        <h3><i class="fas fa-newspaper" style="color:var(--primary-light);"></i> All Posts</h3>
+        <form method="GET" action="/admin_zone/posts/" class="admin-filter-bar">
+            <input type="text" name="q" class="admin-search-input" placeholder="Search..."
+                value="{{ search_query|default:'' }}">
+            <select name="status" class="admin-filter-select" onchange="this.form.submit()"
+                id="status-select" data-value="{{ status_filter }}">
+                <option value="">All Status</option>
+                <option value="published">Published</option>
+                <option value="pending">Pending Review</option>
+            </select>
+            <button type="submit" class="admin-search-btn"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+    <div class="admin-section-body">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Views</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td>
+                            <div>
+                                <strong style="color:var(--text-primary);">{{ post.title|truncatechars:35 }}</strong>
+                                {% if post.excerpt %}
+                                <br>
+                                <span style="font-size:0.76rem;color:var(--text-muted);">
+                                    {{ post.excerpt|truncatechars:45 }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text-muted);">
+                            @{{ post.author_id.user_id.username }}
+                        </td>
+                        <td>
+                            {% if post.category_id %}
+                            <span style="color:var(--text-secondary);">{{ post.category_id.name }}</span>
+                            {% else %}
+                            <span style="color:var(--text-muted);">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if post.status %}
+                            <span class="status-approved"><i class="fas fa-circle" style="font-size:0.4rem;"></i>
+                                Published</span>
+                            {% else %}
+                            <span class="status-pending"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Pending
+                                Review</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:var(--text-muted);">{{ post.views_count }}</td>
+                        <td style="color:var(--text-muted);font-size:0.85rem;">{{ post.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                {% if not post.status %}
+                                <form method="POST" action="/admin_zone/posts/" style="display:inline;">{% csrf_token %}
+                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="btn-approve">Approve</button>
+                                </form>
+                                <form method="POST" action="/admin_zone/posts/" style="display:inline;"
+                                    onsubmit="return confirm('Reject and delete this post?');">{% csrf_token %}
+                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn-reject">Reject</button>
+                                </form>
+                                {% else %}
+                                <a href="/reader/blog/{{ post.id }}/" class="view-link">View</a>
+                                {% endif %}
+                                <form method="POST" action="/admin_zone/posts/" style="display:inline;"
+                                    onsubmit="return confirm('Delete this post?');">{% csrf_token %}
+                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn-delete-sm"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center" style="padding:40px;color:var(--text-muted);">No posts
+                            found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var sel = document.getElementById('status-select');
+    if (sel && sel.dataset.value) { sel.value = sel.dataset.value; }
+</script>
+{% endblock %}

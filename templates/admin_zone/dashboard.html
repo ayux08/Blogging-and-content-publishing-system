@@ -1,0 +1,158 @@
+{% extends "admin_zone/base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block topbar_title %}Admin Dashboard{% endblock %}
+{% block topbar_breadcrumb %}/ BlogSphere{% endblock %}
+{% block content %}
+<!-- Stats Row -->
+<div class="grid-4 mb-4">
+    <div class="admin-stat-card animate-fadeInUp stagger-1">
+        <div class="stat-left">
+            <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="stat-number">{{ total_users }}</div>
+                <p class="stat-label">Registered Users</p>
+            </div>
+        </div>
+        <span class="stat-badge total">Total</span>
+    </div>
+    <div class="admin-stat-card animate-fadeInUp stagger-2">
+        <div class="stat-left">
+            <div class="stat-icon cyan"><i class="fas fa-newspaper"></i></div>
+            <div>
+                <div class="stat-number">{{ total_posts }}</div>
+                <p class="stat-label">Total Posts</p>
+            </div>
+        </div>
+        <span class="stat-badge live">{{ live_posts }} live</span>
+    </div>
+    <div class="admin-stat-card animate-fadeInUp stagger-3">
+        <div class="stat-left">
+            <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+            <div>
+                <div class="stat-number">{{ pending_posts }}</div>
+                <p class="stat-label">Pending Approvals</p>
+            </div>
+        </div>
+        <span class="stat-badge review">Needs review</span>
+    </div>
+    <div class="admin-stat-card animate-fadeInUp stagger-4">
+        <div class="stat-left">
+            <div class="stat-icon info"><i class="fas fa-comments"></i></div>
+            <div>
+                <div class="stat-number">{{ total_comments }}</div>
+                <p class="stat-label">Total Comments</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px;">
+    <!-- Recent Posts -->
+    <div class="admin-section-card">
+        <div class="admin-section-header">
+            <h3><i class="fas fa-newspaper" style="color:var(--primary-light);"></i> Recent Posts</h3>
+            <a href="/admin_zone/posts/" class="view-all-link">View All</a>
+        </div>
+        <div class="admin-section-body">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in recent_posts %}
+                    <tr>
+                        <td><strong style="color:var(--text-primary);">{{ post.title|truncatechars:30 }}</strong></td>
+                        <td style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text-muted);">
+                            {{ post.author_id.user_id.username }}
+                        </td>
+                        <td>
+                            {% if post.status %}
+                            <span class="status-approved"><i class="fas fa-circle" style="font-size:0.4rem;"></i>
+                                Published</span>
+                            {% else %}
+                            <span class="status-pending"><i class="fas fa-circle" style="font-size:0.4rem;"></i> Pending
+                                Review</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:var(--text-muted);font-size:0.82rem;">{{ post.created_at|date:"M d" }}</td>
+                        <td>
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                {% if not post.status %}
+                                <form method="POST" action="/admin_zone/posts/" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="btn-approve">Approve</button>
+                                </form>
+                                {% else %}
+                                <a href="/reader/blog/{{ post.id }}/" class="view-link"
+                                    style="color:var(--primary-light);font-size:0.85rem;text-decoration:underline;">View</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center" style="padding:30px;">No posts yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div style="display:flex;flex-direction:column;gap:20px;">
+        <!-- Recent Users -->
+        <div class="admin-section-card">
+            <div class="admin-section-header">
+                <h3><i class="fas fa-users" style="color:var(--accent-cyan);"></i> Recent Users</h3>
+                <a href="/admin_zone/users/" class="view-all-link">View All</a>
+            </div>
+            <div class="admin-section-body">
+                {% for user in recent_users %}
+                <div class="admin-user-item">
+                    <div class="user-avatar"
+                        style="background:{% cycle 'var(--accent-green)' 'var(--accent-pink)' 'var(--accent-orange)' 'var(--primary)' 'var(--accent-cyan)' %};">
+                        {{ user.name|first }}
+                    </div>
+                    <div class="user-details">
+                        <h5>{{ user.name }}</h5>
+                        <span>{{ user.email }}</span>
+                    </div>
+                    <span class="role-badge {{ user.role }}">{{ user.role }}</span>
+                </div>
+                {% empty %}
+                <div style="padding:24px;text-align:center;color:var(--text-muted);">No users yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="admin-section-card">
+            <div class="admin-section-header">
+                <h3><i class="fas fa-tags" style="color:var(--accent-orange);"></i> Top Categories</h3>
+            </div>
+            <div class="admin-section-body">
+                {% for item in top_categories %}
+                <div class="admin-category-item">
+                    <span style="font-weight:500;color:var(--text-primary);">{{ item.category.name }}</span>
+                    <span class="post-count-badge">
+                        <i class="fas fa-circle" style="font-size:0.35rem;"></i>
+                        {{ item.post_count }} posts
+                    </span>
+                </div>
+                {% empty %}
+                <div style="padding:24px;text-align:center;color:var(--text-muted);">No categories yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

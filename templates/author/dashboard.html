@@ -1,0 +1,97 @@
+{% extends "author/base.html" %}
+{% block title %}Author Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-pen-nib" style="color:var(--primary-light);"></i> Author Dashboard</h1>
+    <p style="color:var(--text-muted);">Welcome back, {{ user_name }}! Here's your content overview.</p>
+</div>
+<div class="page-content">
+    <div class="grid-4 mb-4">
+        <div class="stat-card animate-fadeInUp stagger-1">
+            <div class="stat-icon purple"><i class="fas fa-newspaper"></i></div>
+            <div class="stat-info">
+                <h4>{{ total_posts|default:"0" }}</h4>
+                <p>Total Posts</p>
+            </div>
+        </div>
+        <div class="stat-card animate-fadeInUp stagger-2">
+            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <h4>{{ published|default:"0" }}</h4>
+                <p>Published</p>
+            </div>
+        </div>
+        <div class="stat-card animate-fadeInUp stagger-3">
+            <div class="stat-icon orange"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-info">
+                <h4>{{ drafts_count|default:"0" }}</h4>
+                <p>Drafts</p>
+            </div>
+        </div>
+        <div class="stat-card animate-fadeInUp stagger-4">
+            <div class="stat-icon pink"><i class="fas fa-eye"></i></div>
+            <div class="stat-info">
+                <h4>{{ total_views|default:"0" }}</h4>
+                <p>Total Views</p>
+            </div>
+        </div>
+    </div>
+    <div class="grid-4 mb-4">
+        <div class="stat-card">
+            <div class="stat-icon pink"><i class="fas fa-heart"></i></div>
+            <div class="stat-info">
+                <h4>{{ total_likes|default:"0" }}</h4>
+                <p>Total Likes</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon cyan"><i class="fas fa-comments"></i></div>
+            <div class="stat-info">
+                <h4>{{ total_comments|default:"0" }}</h4>
+                <p>Comments</p>
+            </div>
+        </div>
+        <div class="stat-card" style="grid-column:span 2;">
+            <div style="display:flex;gap:16px;align-items:center;width:100%;">
+                <div class="stat-icon purple"><i class="fas fa-plus-circle"></i></div>
+                <div style="flex:1;">
+                    <h4 style="font-size:1rem;margin-bottom:8px;">Ready to write?</h4>
+                    <a href="/author/create/" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i> Create New
+                        Post</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <div class="card">
+        <div class="card-header">
+            <h4><i class="fas fa-clock"></i> Recent Posts</h4>
+            <a href="/author/posts/" class="btn btn-sm btn-secondary">View All</a>
+        </div>
+        {% for post in recent_posts %}
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border-color);">
+            <div>
+                <h5 style="font-size:0.95rem;margin-bottom:4px;">
+                    <a href="/reader/blog/{{ post.id }}/" style="color:var(--text-primary);">{{ post.title }}</a>
+                </h5>
+                <span style="font-size:0.8rem;color:var(--text-muted);">{{ post.category_id.name }} · {{ post.created_at|date:"M d, Y" }}</span>
+            </div>
+            <div class="flex gap-1">
+                {% if post.status %}<span class="badge badge-success">Published</span>
+                {% else %}<span class="badge badge-warning">Draft</span>{% endif %}
+                <a href="/author/edit/{{ post.id }}/" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="icon"><i class="fas fa-pen-nib"></i></div>
+            <h3>No posts yet</h3>
+            <p>Start creating amazing content!</p>
+            <a href="/author/create/" class="btn btn-primary mt-2"><i class="fas fa-plus"></i> Create First Post</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

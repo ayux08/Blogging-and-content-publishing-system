@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Reader{% endblock %} — Blogverse</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="/reader/" class="navbar-brand">
+                <div class="brand-icon">B</div>
+                Blog<span class="highlight">verse</span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="/reader/" class="{% if page == 'dashboard' %}active{% endif %}"><i class="fas fa-home"></i>
+                        Home</a></li>
+                <li><a href="/reader/browse/" class="{% if page == 'browse' %}active{% endif %}"><i
+                            class="fas fa-compass"></i> Browse</a></li>
+                <li><a href="/reader/bookmarks/" class="{% if page == 'bookmarks' %}active{% endif %}"><i
+                            class="fas fa-bookmark"></i> Bookmarks</a></li>
+                <li><a href="/reader/history/" class="{% if page == 'history' %}active{% endif %}"><i
+                            class="fas fa-history"></i> History</a></li>
+                {% if user_id %}
+                <li>
+                    <a href="/reader/notifications/" class="{% if page == 'notifications' %}active{% endif %}"
+                        style="position:relative;">
+                        <i class="fas fa-bell"></i>
+                        {% if notif_count %}<span class="nav-badge">{{ notif_count }}</span>{% endif %}
+                    </a>
+                </li>
+                <li class="nav-profile">
+                    <div class="nav-profile-btn">
+                        <div class="avatar">{{ user_name|first }}</div>
+                        <span>{{ user_name }}</span>
+                        <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+                    </div>
+                    <div class="nav-dropdown">
+                        <a href="/reader/profile/"><i class="fas fa-user-circle"></i> My Profile</a>
+                        {% if user_role == 'author' %}
+                        <a href="/author/"><i class="fas fa-pen-nib"></i> Author Dashboard</a>
+                        {% endif %}
+                        {% if user_role == 'admin' %}
+                        <a href="/admin_zone/"><i class="fas fa-shield-alt"></i> Admin Panel</a>
+                        {% endif %}
+                        <div class="divider"></div>
+                        <a href="/accounts/logout/" class="danger"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+                    </div>
+                </li>
+                {% else %}
+                <li><a href="/accounts/login/" class="btn btn-secondary btn-sm">Sign In</a></li>
+                <li><a href="/accounts/register/" class="btn btn-primary btn-sm">Sign Up</a></li>
+                {% endif %}
+            </ul>
+            <button class="nav-toggle" onclick="document.querySelector('.navbar-nav').classList.toggle('show')">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+        <div class="container-wide">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="padding:18px 0;">
+                <span>&copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong></span>
+                <span>Blogging & Content Publishing System</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/custom-select.js' %}?v=3"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,73 @@
+{% extends "author/base.html" %}
+{% block title %}Create New Post{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-plus-circle" style="color:var(--primary-light);"></i> Create New Post</h1>
+    <p style="color:var(--text-muted);">Write and publish a new blog post</p>
+</div>
+<div class="page-content">
+    {% if error %}
+    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="card" style="max-width:900px;" id="post-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title"><i class="fas fa-heading"></i> Post Title</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Enter a compelling title..."
+                required style="font-size:1.2rem;font-weight:600;">
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="category"><i class="fas fa-tag"></i> Category</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="">Select a category</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tags"><i class="fas fa-tags"></i> Tags (comma separated)</label>
+                <input type="text" id="tags" name="tags" class="form-control" placeholder="python, web, tutorial">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="content"><i class="fas fa-pen-fancy"></i> Content</label>
+            <textarea id="content" name="content" class="form-control" rows="12"
+                placeholder="Start writing your blog post here..." required
+                style="min-height:250px;resize:vertical;"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="featured_image"><i class="fas fa-images"></i> Images</label>
+            <input type="file" id="featured_image" name="images" class="form-control" accept="image/*" multiple>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">
+                <i class="fas fa-info-circle"></i> You can select multiple images. The first image will be used as the featured image.
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-toggle-on"></i> Publish Status</label>
+            <div class="flex gap-2 mt-1">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                    <input type="radio" name="status" value="draft" checked> <span>Save as Draft</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                    <input type="radio" name="status" value="publish"> <span>Submit for Review</span>
+                </label>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;">
+                <i class="fas fa-info-circle"></i> Posts submitted for review will be published after admin approval.
+            </p>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane"></i> Submit Post</button>
+            <a href="/author/" class="btn btn-secondary btn-lg">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

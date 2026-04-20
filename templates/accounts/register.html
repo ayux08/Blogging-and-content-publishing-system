@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Join Blogverse - Create your account and start publishing or reading amazing content.">
+    <title>Create Account — Blogverse</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="auth-page">
+        <div class="auth-card animate-fadeInUp" style="max-width:480px;">
+            <a href="/" class="navbar-brand" style="justify-content:center;margin-bottom:32px;">
+                <div class="brand-icon">B</div>
+                Blog<span class="highlight">verse</span>
+            </a>
+            <h1>Create Account</h1>
+            <p class="subtitle">Join the Blogverse community today</p>
+
+            {% if error %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/accounts/register/">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-at"></i> Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="johndoe"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="you@example.com"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" class="form-control"
+                        placeholder="Min 4 characters" required>
+                </div>
+                <div class="form-group">
+                    <label for="role"><i class="fas fa-user-tag"></i> I want to</label>
+                    <select id="role" name="role" class="form-control">
+                        <option value="reader">Read & Discover Content</option>
+                        <option value="author">Write & Publish Content</option>
+                    </select>
+                </div>
+                <div class="form-group" id="bio-group" style="display:none;">
+                    <label for="bio"><i class="fas fa-pen"></i> Author Bio</label>
+                    <textarea id="bio" name="bio" class="form-control" rows="3"
+                        placeholder="Tell readers about yourself..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            <div class="auth-footer">
+                Already have an account? <a href="/accounts/login/">Sign in here</a>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/custom-select.js' %}?v=3"></script>
+    <script>
+        document.getElementById('role').addEventListener('change', function () {
+            document.getElementById('bio-group').style.display = this.value === 'author' ? 'block' : 'none';
+        });
+    </script>
+</body>
+
+</html>

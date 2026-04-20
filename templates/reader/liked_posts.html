@@ -1,0 +1,46 @@
+{% extends "reader/base.html" %}
+{% block title %}Liked Posts{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-heart" style="color:var(--primary-light);"></i> Liked Posts</h1>
+    <p style="color:var(--text-muted);">Posts that you have loved</p>
+</div>
+<div class="page-content">
+    {% if liked_posts %}
+    <div class="grid-3">
+        {% for like in liked_posts %}
+        <div class="post-card">
+            <div class="post-card-image" style="height:160px;">
+                {% if like.post_id.featured_image %}
+                <img src="{{ like.post_id.featured_image.url }}" alt="{{ like.post_id.title }}">
+                {% else %}
+                <div
+                    style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter|add:200 }}, 55%, 28%), hsl({{ forloop.counter|add:240 }}, 45%, 18%));display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-heart" style="font-size:2rem;color:rgba(255,255,255,0.15);"></i>
+                </div>
+                {% endif %}
+                <span class="category-badge">{{ like.post_id.category_id.name }}</span>
+            </div>
+            <div class="post-card-body">
+                <h3><a href="/reader/blog/{{ like.post_id.id }}/">{{ like.post_id.title }}</a></h3>
+                <div class="post-card-meta">
+                    <div class="post-card-author">
+                        <div class="avatar-sm">{{ like.post_id.author_id.user_id.name|first }}</div>
+                        <span>{{ like.post_id.author_id.user_id.name }}</span>
+                    </div>
+                    <span>{{ like.created_at|date:"M d" }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="fas fa-heart-broken"></i></div>
+        <h3>No liked posts</h3>
+        <p>You haven't liked any posts yet. Start reading and share the love!</p>
+        <a href="/reader/browse/" class="btn btn-primary mt-2"><i class="fas fa-compass"></i> Browse Posts</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

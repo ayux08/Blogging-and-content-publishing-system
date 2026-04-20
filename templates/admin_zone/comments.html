@@ -1,0 +1,80 @@
+{% extends "admin_zone/base.html" %}
+{% block title %}Comment Moderation{% endblock %}
+{% block topbar_title %}Comment Moderation{% endblock %}
+{% block topbar_breadcrumb %}{% endblock %}
+{% block content %}
+<div class="admin-section-card">
+    <div class="admin-section-header">
+        <h3><i class="fas fa-comments" style="color:var(--primary-light);"></i> Comments</h3>
+        <form method="GET" action="/admin_zone/comments/" class="admin-filter-bar">
+            <input type="text" name="q" class="admin-search-input" placeholder="Search..."
+                value="{{ search_query|default:'' }}">
+            <button type="submit" class="admin-search-btn"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+    <div class="admin-section-body">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Author</th>
+                        <th>Comment</th>
+                        <th>Post</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in comments %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div
+                                    style="width:32px;height:32px;border-radius:50%;background:var(--accent-cyan);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:0.78rem;flex-shrink:0;">
+                                    {{ comment.user_id.name|first }}
+                                </div>
+                                <div>
+                                    <strong style="color:var(--text-primary);font-size:0.88rem;">
+                                        {{ comment.user_id.name }}
+                                    </strong><br>
+                                    <span style="font-size:0.76rem;color:var(--text-muted);">
+                                        @{{ comment.user_id.username }}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="max-width:280px;color:var(--text-secondary);">
+                            {{ comment.comment_text|truncatechars:50 }}
+                        </td>
+                        <td>
+                            <a href="/reader/blog/{{ comment.post_id.id }}/"
+                                style="color:var(--primary-light);font-size:0.85rem;">
+                                {{ comment.post_id.title|truncatechars:30 }}
+                            </a>
+                        </td>
+                        <td style="color:var(--text-muted);font-size:0.85rem;">
+                            {{ comment.created_at|date:"M d, Y" }}
+                        </td>
+                        <td>
+                            <form method="POST" action="/admin_zone/comments/" style="display:inline;"
+                                onsubmit="return confirm('Delete this comment?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                <input type="hidden" name="action" value="delete">
+                                <button type="submit" class="btn-delete-sm"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center" style="padding:40px;color:var(--text-muted);">
+                            No comments yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

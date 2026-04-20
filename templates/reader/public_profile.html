@@ -1,0 +1,152 @@
+{% extends "reader/base.html" %}
+{% block title %}{{ target_user.name|default:"User" }} — Profile{% endblock %}
+{% block content %}
+{% if target_user %}
+<div class="page-content" style="padding-top:40px;">
+    <!-- Profile Header -->
+    <div class="card mb-4">
+        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+            <!-- Avatar -->
+            <div>
+                {% if author_profile and author_profile.profile_image %}
+                <img src="{{ author_profile.profile_image.url }}" alt="{{ target_user.name }}"
+                    style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);">
+                {% else %}
+                <div
+                    style="width:100px;height:100px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:800;color:white;">
+                    {{ target_user.name|first }}</div>
+                {% endif %}
+            </div>
+            <!-- Info -->
+            <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+                    <h2 style="margin:0;">{{ target_user.name }}</h2>
+                    <span class="badge badge-primary">{{ target_user.role|title }}</span>
+                    {% if not target_user.status %}
+                    <span class="badge badge-danger">Inactive</span>
+                    {% endif %}
+                </div>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:12px;">@{{ target_user.username }}</p>
+                {% if author_bio %}
+                <p style="color:var(--text-secondary);max-width:600px;">{{ author_bio }}</p>
+                {% endif %}
+
+                <!-- Follow Stats -->
+                <div style="display:flex;gap:24px;margin:16px 0;">
+                    <div>
+                        <span style="font-weight:700;font-size:1.1rem;color:var(--text-primary);">{{ post_count|default:"0" }}</span>
+                        <span style="color:var(--text-muted);font-size:0.85rem;margin-left:4px;">Posts</span>
+                    </div>
+                    <div>
+                        <span style="font-weight:700;font-size:1.1rem;color:var(--text-primary);" id="follower-count">{{ follower_count|default:"0" }}</span>
+                        <span style="color:var(--text-muted);font-size:0.85rem;margin-left:4px;">Followers</span>
+                    </div>
+                    <div>
+                        <span style="font-weight:700;font-size:1.1rem;color:var(--text-primary);">{{ following_count|default:"0" }}</span>
+                        <span style="color:var(--text-muted);font-size:0.85rem;margin-left:4px;">Following</span>
+                    </div>
+                    <div>
+                        <span style="font-weight:700;font-size:1.1rem;color:var(--text-primary);">{{ total_views|default:"0" }}</span>
+                        <span style="color:var(--text-muted);font-size:0.85rem;margin-left:4px;">Views</span>
+                    </div>
+                </div>
+
+                <!-- Follow Button -->
+                {% if user_id and user_id != target_user.id %}
+                <button id="follow-btn" class="btn {% if is_following %}btn-secondary{% else %}btn-primary{% endif %}"
+                    onclick="toggleFollow({{ target_user.id }})">
+                    <i class="fas {% if is_following %}fa-user-check{% else %}fa-user-plus{% endif %}"></i>
+                    <span id="follow-text">{% if is_following %}Following{% else %}Follow{% endif %}</span>
+                </button>
+                {% elif not user_id %}
+                <a href="/accounts/login/" class="btn btn-primary"><i class="fas fa-user-plus"></i> Login to Follow</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- User Posts -->
+    {% if user_posts %}
+    <h3 class="mb-3"><i class="fas fa-newspaper" style="color:var(--primary-light);"></i> Posts by {{ target_user.name }}</h3>
+    <div class="grid-3">
+        {% for post in user_posts %}
+        <div class="post-card animate-fadeInUp">
+            <div class="post-card-image">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                {% else %}
+                <div
+                    style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter|add:200 }}, 55%, 28%), hsl({{ forloop.counter|add:240 }}, 45%, 18%));display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-feather-alt" style="font-size:2rem;color:rgba(255,255,255,0.15);"></i>
+                </div>
+                {% endif %}
+                <span class="category-badge">{{ post.category_id.name }}</span>
+            </div>
+            <div class="post-card-body">
+                <h3><a href="/reader/blog/{{ post.id }}/">{{ post.title }}</a></h3>
+                <p class="excerpt">{{ post.excerpt|default:post.content|truncatewords:20 }}</p>
+                <div class="post-card-meta">
+                    <span style="font-size:0.8rem;color:var(--text-muted);">{{ post.created_at|date:"M d, Y" }}</span>
+                    <div class="post-card-stats">
+                        <span><i class="fas fa-heart"></i> {{ post.like_count }}</span>
+                        <span><i class="fas fa-eye"></i> {{ post.view_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="fas fa-pen-nib"></i></div>
+        <h3>No published posts</h3>
+        <p>This user hasn't published any posts yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="page-content" style="padding-top:40px;">
+    <div class="empty-state">
+        <div class="icon"><i class="fas fa-user-slash"></i></div>
+        <h3>User not found</h3>
+        <p>The profile you're looking for doesn't exist.</p>
+        <a href="/reader/browse/" class="btn btn-primary mt-2"><i class="fas fa-arrow-left"></i> Browse Posts</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleFollow(userId) {
+        const csrfToken = '{{ csrf_token }}';
+        fetch(`/reader/ajax/follow/${userId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    window.location.href = '/accounts/login/';
+                    return;
+                }
+                const btn = document.getElementById('follow-btn');
+                const text = document.getElementById('follow-text');
+                const count = document.getElementById('follower-count');
+                if (data.following) {
+                    btn.className = 'btn btn-secondary';
+                    btn.querySelector('i').className = 'fas fa-user-check';
+                    text.textContent = 'Following';
+                } else {
+                    btn.className = 'btn btn-primary';
+                    btn.querySelector('i').className = 'fas fa-user-plus';
+                    text.textContent = 'Follow';
+                }
+                count.textContent = data.count;
+            });
+    }
+</script>
+{% endblock %}

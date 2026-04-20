@@ -1,0 +1,38 @@
+{% extends "author/base.html" %}
+{% block title %}Post Status{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-clock" style="color:var(--accent-cyan);"></i> Approval Status</h1>
+    <p style="color:var(--text-muted);">Track posts currently pending review by administrators</p>
+</div>
+<div class="page-content">
+    {% if pending_posts %}
+    <div class="card">
+        {% for post in pending_posts %}
+        <div
+            style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border-color);">
+            <div>
+                <h4 style="font-size:1rem;margin-bottom:4px;">{{ post.title }}</h4>
+                <span style="font-size:0.82rem;color:var(--text-muted);">Submitted {{ post.updated_at|date:"M d, Y"
+                    }}</span>
+            </div>
+            <div class="flex gap-1 align-center">
+                <span
+                    style="display:inline-block;padding:4px 10px;background:rgba(0,184,217,0.1);color:var(--accent-cyan);border-radius:12px;font-size:0.75rem;font-weight:600;"><i
+                        class="fas fa-spinner fa-spin"></i> Pending Review</span>
+                <a href="/author/edit/{{ post.id }}/" class="btn btn-sm btn-primary ml-2"><i class="fas fa-edit"></i>
+                    Review</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon" style="color:var(--accent-cyan);"><i class="fas fa-check-circle"></i></div>
+        <h3>All Clear!</h3>
+        <p>You have no posts currently pending review.</p>
+        <a href="/author/create/" class="btn btn-primary mt-2"><i class="fas fa-plus"></i> Submit New Post</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

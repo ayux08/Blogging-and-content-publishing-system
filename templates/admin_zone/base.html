@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} — BlogSphere</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-brand">
+                <a href="/admin_zone/">
+                    <div class="brand-icon">B</div>
+                    <div>
+                        Blog<span class="highlight">Sphere</span>
+                        <span class="brand-sub">Blog Portal</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="admin-sidebar-toggle">
+                <a href="/admin_zone/" class="active-toggle"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="/reader/"><i class="fas fa-th-large"></i> Browse</a>
+            </div>
+
+            <nav class="admin-sidebar-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <span class="admin-nav-label">Main</span>
+                    <a href="/admin_zone/" class="admin-nav-item {% if page == 'dashboard' %}active{% endif %}">
+                        <i class="fas fa-chart-pie"></i> Dashboard
+                    </a>
+                </div>
+
+                <!-- MANAGEMENT -->
+                <div class="admin-nav-section">
+                    <span class="admin-nav-label">Management</span>
+                    <a href="/admin_zone/users/" class="admin-nav-item {% if page == 'users' %}active{% endif %}">
+                        <i class="fas fa-users"></i> User Management
+                    </a>
+                    <a href="/admin_zone/categories/"
+                        class="admin-nav-item {% if page == 'categories' %}active{% endif %}">
+                        <i class="fas fa-folder"></i> Categories
+                    </a>
+                    <a href="/admin_zone/posts/" class="admin-nav-item {% if page == 'posts' %}active{% endif %}">
+                        <i class="fas fa-newspaper"></i> Post Approval
+                        {% if pending_posts %}<span class="admin-nav-badge">{{ pending_posts }}</span>{% endif %}
+                    </a>
+                    <a href="/admin_zone/comments/" class="admin-nav-item {% if page == 'comments' %}active{% endif %}">
+                        <i class="fas fa-comments"></i> Comments
+                    </a>
+                </div>
+
+                <!-- INSIGHTS -->
+                <div class="admin-nav-section">
+                    <span class="admin-nav-label">Insights</span>
+                    <a href="/admin_zone/analytics/"
+                        class="admin-nav-item {% if page == 'analytics' %}active{% endif %}">
+                        <i class="fas fa-chart-bar"></i> Analytics
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-avatar">{{ user_name|first }}</div>
+                <div class="admin-user-info">
+                    <h5>{{ user_name }}</h5>
+                    <span>Admin</span>
+                </div>
+                <a href="/accounts/logout/" class="admin-logout-btn" title="Sign Out">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-main-wrapper">
+            <header class="admin-topbar">
+                <div class="admin-topbar-left">
+                    <span class="admin-topbar-title">{% block topbar_title %}Admin Dashboard{% endblock %}</span>
+                    <span class="admin-topbar-breadcrumb">{% block topbar_breadcrumb %}/ BlogSphere{% endblock %}</span>
+                </div>
+                <div class="admin-topbar-right">
+                    <button class="admin-topbar-btn" title="Search"><i class="fas fa-search"></i></button>
+                    <button class="admin-topbar-btn" title="Notifications"><i class="fas fa-bell"></i></button>
+                    <div class="admin-zone-badge">
+                        <i class="fas fa-shield-alt"></i> Admin Zone
+                    </div>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                {% block content %}{% endblock %}
+            </main>
+            <div style="padding:12px 28px;text-align:center;font-size:0.78rem;color:var(--text-muted);border-top:1px solid var(--border-color);">
+                &copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong> · Blogging & Content Publishing System
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button class="admin-mobile-toggle" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script src="{% static 'js/custom-select.js' %}?v=3"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

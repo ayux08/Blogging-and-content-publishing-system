@@ -1,0 +1,108 @@
+{% extends "admin_zone/base.html" %}
+{% block title %}User Management{% endblock %}
+{% block topbar_title %}User Management{% endblock %}
+{% block topbar_breadcrumb %}/ Admin{% endblock %}
+{% block content %}
+<div class="admin-section-card">
+    <div class="admin-section-header">
+        <h3><i class="fas fa-users" style="color:var(--primary-light);"></i> All Users</h3>
+        <form method="GET" action="/admin_zone/users/" class="admin-filter-bar">
+            <input type="text" name="q" class="admin-search-input" placeholder="Search users..."
+                value="{{ search_query|default:'' }}">
+            <select name="role" class="admin-filter-select" onchange="this.form.submit()" id="role-select"
+                data-value="{{ role_filter }}">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="author">Author</option>
+                <option value="reader">Reader</option>
+            </select>
+            <button type="submit" class="admin-search-btn"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+    <div class="admin-section-body">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div
+                                    style="width:36px;height:36px;border-radius:50%;background:{% cycle 'var(--accent-green)' 'var(--accent-pink)' 'var(--accent-orange)' 'var(--primary)' 'var(--accent-cyan)' %};display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:0.82rem;flex-shrink:0;">
+                                    {{ u.name|first }}
+                                </div>
+                                <div>
+                                    <strong style="color:var(--text-primary);font-size:0.9rem;">
+                                        {{ u.name }}
+                                    </strong><br>
+                                    <span style="font-size:0.78rem;color:var(--text-muted);">
+                                        @{{ u.username }}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color:var(--text-secondary);">{{ u.email }}</td>
+                        <td><span class="role-badge {{ u.role }}">{{ u.role }}</span></td>
+                        <td style="color:var(--text-muted);font-size:0.85rem;">{{ u.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            {% if u.status %}
+                            <span class="status-approved">
+                                <i class="fas fa-circle" style="font-size:0.4rem;"></i> Active
+                            </span>
+                            {% else %}
+                            <span class="status-pending">
+                                <i class="fas fa-circle" style="font-size:0.4rem;"></i> Inactive
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if u.role == 'admin' and u.id == user_id %}
+                            <span style="color:var(--text-muted);font-size:0.82rem;font-style:italic;">You</span>
+                            {% elif u.role != 'admin' %}
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <form method="POST" action="/admin_zone/users/toggle/{{ u.id }}/"
+                                    style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-deactivate"
+                                        style="{% if not u.status %}background:var(--accent-green);{% else %}background:var(--accent-red);{% endif %}">
+                                        {% if u.status %}Deactivate{% else %}Activate{% endif %}
+                                    </button>
+                                </form>
+                                <form method="POST" action="/admin_zone/users/delete/{{ u.id }}/"
+                                    style="display:inline;" onsubmit="return confirm('Delete this user permanently?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-delete-sm"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center" style="padding:40px;color:var(--text-muted);">No users
+                            found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var sel = document.getElementById('role-select');
+    if (sel && sel.dataset.value) { sel.value = sel.dataset.value; }
+</script>
+{% endblock %}

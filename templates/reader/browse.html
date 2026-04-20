@@ -1,0 +1,90 @@
+{% extends "reader/base.html" %}
+{% block title %}Browse Posts{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:16px;">
+        <div>
+            <h1><i class="fas fa-compass" style="color:var(--primary-light);"></i> Browse Posts</h1>
+            <p style="color:var(--text-muted);">Discover content by category, tags, or search</p>
+        </div>
+        <form method="GET" action="/reader/browse/" class="search-bar">
+            <input type="text" name="q" placeholder="Search posts, authors..." value="{{ search_query|default:'' }}">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+        </form>
+    </div>
+</div>
+<div class="page-content">
+    <!-- Category Filters -->
+    <div class="filter-tabs mb-3">
+        <a href="/reader/browse/" class="filter-tab {% if not selected_category %}active{% endif %}">All</a>
+        {% for cat in categories %}
+        <a href="/reader/browse/?category={{ cat.id }}{% if search_query %}&q={{ search_query }}{% endif %}"
+            class="filter-tab {% if selected_category == cat.id|stringformat:'d' %}active{% endif %}">{{ cat.name }}</a>
+        {% endfor %}
+    </div>
+
+    {% if search_query %}
+    <div class="alert alert-info mb-3"><i class="fas fa-search"></i> Showing results for "<strong>{{ search_query }}</strong>"</div>
+
+    {% if people_results %}
+    <h4 class="mb-2"><i class="fas fa-users"></i> People</h4>
+    <div class="flex gap-2 flex-wrap mb-3">
+        {% for person in people_results %}
+        <a href="/reader/user/{{ person.username }}/" class="card"
+            style="display:flex;align-items:center;gap:12px;padding:12px 16px;min-width:200px;">
+            <div
+                style="width:36px;height:36px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;">
+                {{ person.name|first }}</div>
+            <div>
+                <strong style="color:var(--text-primary);font-size:0.9rem;">{{ person.name }}</strong><br>
+                <small style="color:var(--text-muted);">@{{ person.username }}</small>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Posts Grid -->
+    {% if posts %}
+    <div class="grid-3">
+        {% for post in posts %}
+        <div class="post-card animate-fadeInUp">
+            <div class="post-card-image">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                {% else %}
+                <div
+                    style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter0|add:180 }}, 55%, 28%), hsl({{ forloop.counter0|add:220 }}, 45%, 18%));display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-feather-alt" style="font-size:2.5rem;color:rgba(255,255,255,0.15);"></i>
+                </div>
+                {% endif %}
+                <span class="category-badge">{{ post.category_id.name }}</span>
+            </div>
+            <div class="post-card-body">
+                <h3><a href="/reader/blog/{{ post.id }}/">{{ post.title }}</a></h3>
+                <p class="excerpt">{{ post.excerpt|default:post.content|truncatewords:20 }}</p>
+                <div class="post-card-meta">
+                    <div class="post-card-author">
+                        <div class="avatar-sm">{{ post.author_id.user_id.name|first }}</div>
+                        <span>{{ post.author_id.user_id.name }}</span>
+                    </div>
+                    <div class="post-card-stats">
+                        <span><i class="fas fa-heart"></i> {{ post.like_count }}</span>
+                        <span><i class="fas fa-eye"></i> {{ post.view_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="fas fa-search"></i></div>
+        <h3>No posts found</h3>
+        <p>Try a different search term or browse all categories.</p>
+        <a href="/reader/browse/" class="btn btn-secondary mt-2">Clear Filters</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

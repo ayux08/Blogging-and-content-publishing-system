@@ -1,0 +1,345 @@
+{% extends "reader/base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<!-- Blog Hero -->
+<div class="blog-hero">
+    <span class="category-badge">{{ post.category_id.name }}</span>
+    <h1>{{ post.title }}</h1>
+    <div class="blog-meta">
+        <a href="/reader/user/{{ post.author_id.user_id.username }}/" class="author-link">
+            <div
+                style="width:32px;height:32px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:0.8rem;">
+                {{ post.author_id.user_id.name|first }}</div>
+            {{ post.author_id.user_id.name }}
+        </a>
+        <span><i class="fas fa-calendar"></i> {{ post.created_at|date:"F d, Y" }}</span>
+        <span><i class="fas fa-eye"></i> {{ view_count }} views</span>
+        <span><i class="fas fa-clock"></i> {{ post.content|wordcount|floatformat:0 }} words</span>
+    </div>
+</div>
+
+<!-- Featured Image -->
+{% if post.featured_image %}
+<div style="max-width:900px;margin:0 auto 32px;border-radius:var(--radius-lg);overflow:hidden;">
+    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}"
+        style="width:100%;max-height:500px;object-fit:cover;">
+</div>
+{% endif %}
+
+<!-- AI Assistant Tools -->
+<div class="card mb-4"
+    style="max-width:900px; margin: 0 auto 24px; padding: 12px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background: var(--bg-surface-2);">
+    <div style="font-weight:600; color:var(--primary);"><i class="fas fa-robot"></i> AI Assistant</div>
+    <div style="display:flex; gap:10px; align-items:center;">
+        <button type="button" class="btn btn-sm btn-outline-primary" onclick="generateReaderSummary()" id="ai-sum-btn"
+            style="padding:4px 8px; font-size:0.8rem;"><i class="fas fa-magic"></i> Summarize</button>
+        <span style="color:var(--border-color);">|</span>
+        <select id="ai-lang" class="form-control" style="width:auto; padding:2px 8px; font-size:0.8rem; height:28px;">
+            <option value="Hindi">Hindi</option>
+            <option value="Tamil">Tamil</option>
+            <option value="Telugu">Telugu</option>
+            <option value="Marathi">Marathi</option>
+        </select>
+        <button type="button" class="btn btn-sm btn-outline-primary" onclick="translateReaderContent()"
+            id="ai-trans-btn" style="padding:4px 8px; font-size:0.8rem;"><i class="fas fa-language"></i>
+            Translate</button>
+    </div>
+</div>
+
+<!-- AI Summary Container -->
+<div id="ai-summary-container"
+    style="display:none; max-width:900px; margin: 0 auto 24px; padding: 16px; background: rgba(144, 202, 249, 0.1); border-left: 4px solid var(--primary); border-radius: 4px;">
+    <h4 style="margin-top:0; color:var(--primary);"><i class="fas fa-list-ul"></i> AI Summary</h4>
+    <div id="ai-summary-text" style="font-style:italic;"></div>
+</div>
+
+<!-- Blog Content -->
+<div class="blog-content">
+    {{ post.content|linebreaksbr }}
+</div>
+
+<!-- Post Images -->
+{% if post_images %}
+<div style="max-width:780px;margin:32px auto;">
+    <div class="grid-2">
+        {% for img in post_images %}
+        <div style="border-radius:var(--radius-sm);overflow:hidden;">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:'Post image' }}"
+                style="width:100%;height:250px;object-fit:cover;">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Tags -->
+{% if post_tags %}
+<div style="max-width:780px;margin:24px auto;">
+    <div class="flex gap-1 flex-wrap">
+        {% for pt in post_tags %}
+        <a href="/reader/browse/?tag={{ pt.tag_id.name }}" class="badge badge-primary"
+            style="padding:6px 14px;font-size:0.8rem;">#{{ pt.tag_id.name }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Actions (Like, Bookmark, Share) -->
+<div class="blog-actions">
+    <button class="blog-action-btn {% if user_liked %}liked{% endif %}" id="like-btn"
+        onclick="toggleLike({{ post.id }})">
+        <i class="fas fa-heart"></i> <span id="like-count">{{ like_count }}</span> Likes
+    </button>
+    <button class="blog-action-btn {% if user_bookmarked %}bookmarked{% endif %}" id="bookmark-btn"
+        onclick="toggleBookmark({{ post.id }})">
+        <i class="fas fa-bookmark"></i> Bookmark
+    </button>
+    <div class="share-menu">
+        <button class="blog-action-btn" onclick="document.getElementById('share-dd').classList.toggle('show')">
+            <i class="fas fa-share-alt"></i> <span id="share-count">{{ share_count }}</span> Share
+        </button>
+        <div class="share-dropdown" id="share-dd">
+            <a href="https://twitter.com/intent/tweet?text={{ post.title }}&url="
+                onclick="sharePost({{ post.id }},'twitter')"><i class="fab fa-twitter" style="color:#1DA1F2;"></i>
+                Twitter</a>
+            <a href="#" onclick="sharePost({{ post.id }},'facebook')"><i class="fab fa-facebook"
+                    style="color:#4267B2;"></i> Facebook</a>
+            <a href="#" onclick="sharePost({{ post.id }},'linkedin')"><i class="fab fa-linkedin"
+                    style="color:#0A66C2;"></i> LinkedIn</a>
+            <a href="#" onclick="sharePost({{ post.id }},'whatsapp')"><i class="fab fa-whatsapp"
+                    style="color:#25D366;"></i> WhatsApp</a>
+            <a href="#" onclick="copyLink()"><i class="fas fa-link" style="color:var(--primary-light);"></i> Copy
+                Link</a>
+        </div>
+    </div>
+</div>
+
+<!-- Comments Section (6.3.5) -->
+<div style="max-width:780px;margin:0 auto;">
+    <h3 class="mb-3"><i class="fas fa-comments" style="color:var(--primary-light);"></i> Comments ({{ comment_count }})
+    </h3>
+
+    {% if user_id %}
+    <div class="card mb-3">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="comment">
+            <div class="form-group" style="margin-bottom:12px;">
+                <textarea name="comment_text" class="form-control" rows="3" placeholder="Write a comment..."
+                    required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-paper-plane"></i> Post
+                Comment</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="alert alert-info mb-3"><i class="fas fa-info-circle"></i> <a href="/accounts/login/">Sign in</a> to
+        leave a comment.</div>
+    {% endif %}
+
+    {% for comment in comments %}
+    <div class="comment-item">
+        <div class="comment-avatar">{{ comment.user_id.name|first }}</div>
+        <div class="comment-body">
+            <div class="comment-header">
+                <span class="name">
+                    <a href="/reader/user/{{ comment.user_id.username }}/" style="color:var(--text-primary);">{{ comment.user_id.name }}</a>
+                </span>
+                <span class="date">{{ comment.created_at|date:"M d, Y" }}</span>
+            </div>
+            <p class="comment-text">{{ comment.comment_text }}</p>
+            <!-- Replies -->
+            {% for reply in comment.replies.all %}
+            <div class="comment-replies">
+                <div class="comment-item" style="padding:8px 0;border-bottom:none;">
+                    <div class="comment-avatar" style="width:28px;height:28px;font-size:0.7rem;">{{ reply.user_id.name|first }}</div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <span class="name" style="font-size:0.85rem;">{{ reply.user_id.name }}</span>
+                            <span class="date">{{ reply.created_at|date:"M d" }}</span>
+                        </div>
+                        <p class="comment-text" style="font-size:0.85rem;">{{ reply.comment_text }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state" style="padding:32px;">
+        <p>No comments yet. Be the first to share your thoughts!</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Related Posts -->
+{% if related_posts %}
+<div style="max-width:780px;margin:48px auto 0;">
+    <h3 class="mb-3"><i class="fas fa-link" style="color:var(--primary-light);"></i> Related Posts</h3>
+    <div class="grid-3">
+        {% for rp in related_posts %}
+        <div class="post-card">
+            <div class="post-card-image" style="height:140px;">
+                {% if rp.featured_image %}
+                <img src="{{ rp.featured_image.url }}" alt="{{ rp.title }}">
+                {% else %}
+                <div
+                    style="width:100%;height:100%;background:linear-gradient(135deg, hsl({{ forloop.counter|add:200 }}, 55%, 28%), hsl({{ forloop.counter|add:240 }}, 45%, 18%));display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-feather-alt" style="font-size:1.5rem;color:rgba(255,255,255,0.15);"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="post-card-body" style="padding:14px;">
+                <h3 style="font-size:0.95rem;"><a href="/reader/blog/{{ rp.id }}/">{{ rp.title|truncatechars:45 }}</a>
+                </h3>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function getCsrf() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '{{ csrf_token }}';
+    }
+
+    function toggleLike(postId) {
+        fetch(`/reader/ajax/like/${postId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrf(), 'Content-Type': 'application/x-www-form-urlencoded' },
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { window.location.href = '/accounts/login/'; return; }
+                document.getElementById('like-count').textContent = data.count;
+                const btn = document.getElementById('like-btn');
+                btn.classList.toggle('liked', data.liked);
+            });
+    }
+
+    function toggleBookmark(postId) {
+        fetch(`/reader/ajax/bookmark/${postId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrf(), 'Content-Type': 'application/x-www-form-urlencoded' },
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) { window.location.href = '/accounts/login/'; return; }
+                const btn = document.getElementById('bookmark-btn');
+                btn.classList.toggle('bookmarked', data.bookmarked);
+            });
+    }
+
+    function sharePost(postId, platform) {
+        fetch(`/reader/ajax/share/${postId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrf(), 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `platform=${platform}`
+        })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('share-count').textContent = data.count;
+                document.getElementById('share-dd').classList.remove('show');
+            });
+
+        const url = window.location.href;
+        const text = '{{ post.title }}';
+        let shareUrl = '';
+        if (platform === 'twitter') shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        else if (platform === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        else if (platform === 'linkedin') shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        else if (platform === 'whatsapp') shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+        if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href);
+        document.getElementById('share-dd').classList.remove('show');
+        alert('Link copied to clipboard!');
+    }
+
+    // Close share dropdown on outside click
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.share-menu')) {
+            document.getElementById('share-dd')?.classList.remove('show');
+        }
+    });
+
+    // AI Features
+    async function generateReaderSummary() {
+        const btn = document.getElementById('ai-sum-btn');
+        const contentDiv = document.querySelector('.blog-content');
+        const textContent = contentDiv.innerText.trim();
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        btn.disabled = true;
+        try {
+            const res = await fetch('/ai/api/summarize/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: textContent, length: 'medium', lang: 'English' })
+            });
+            const data = await res.json();
+            if (data.summary) {
+                document.getElementById('ai-summary-text').innerText = data.summary;
+                document.getElementById('ai-summary-container').style.display = 'block';
+            } else if (data.error) {
+                alert(data.error);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error generating summary');
+        }
+        btn.innerHTML = '<i class="fas fa-magic"></i> Summarize';
+        btn.disabled = false;
+    }
+
+    async function translateReaderContent() {
+        const btn = document.getElementById('ai-trans-btn');
+        const contentDiv = document.querySelector('.blog-content');
+        const textContent = contentDiv.innerText.trim();
+        const lang = document.getElementById('ai-lang').value;
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+        btn.disabled = true;
+        try {
+            const res = await fetch('/ai/api/translate/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: textContent, lang: lang })
+            });
+            const data = await res.json();
+            if (data.translation) {
+                // To preserve some formatting, we replace the whole innerhtml
+                // Since our toy translator is word-by-word, plain text is safest
+                contentDiv.innerText = data.translation;
+
+                // Also translate title if possible, or leave as is
+                // Translate summary if it's visible
+                const summaryDiv = document.getElementById('ai-summary-text');
+                if (summaryDiv.innerText) {
+                    const resSum = await fetch('/ai/api/translate/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: summaryDiv.innerText, lang: lang })
+                    });
+                    const dataSum = await resSum.json();
+                    if (dataSum.translation) {
+                        summaryDiv.innerText = dataSum.translation;
+                    }
+                }
+            } else if (data.error) {
+                alert(data.error);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error translating content');
+        }
+        btn.innerHTML = '<i class="fas fa-language"></i> Translate';
+        btn.disabled = false;
+    }
+</script>
+{% endblock %}
