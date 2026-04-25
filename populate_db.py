@@ -12,7 +12,7 @@ from reader.models import tbl_readers, tbl_comments, tbl_likes, tbl_post_views
 
 def seed_db():
     print("=" * 60)
-    print("  BLOGVERSE — Database Seeder")
+    print("  BLOGGING & CONTENT PUBLISHING SYSTEM — Database Seeder")
     print("=" * 60)
 
     # ─── 1. Create Admin ─────────────────────────────────────────
@@ -20,14 +20,14 @@ def seed_db():
         username="admin",
         defaults={
             "name": "Admin User",
-            "email": "admin@blogverse.com",
+            "email": "admin@bcps.com",
             "password": "admin123",
             "role": "admin",
             "status": True,
         }
     )
     if created:
-        print("[OK] Created admin user (admin@blogverse.com / admin123)")
+        print("[OK] Created admin user (admin@bcps.com / admin123)")
     else:
         print("• Admin user already exists")
 
@@ -47,21 +47,21 @@ def seed_db():
 
     # ─── 3. Create 15 Authors ────────────────────────────────────
     author_data = [
-        ("Arjun Sharma", "arjun_sharma", "arjun@blogverse.com", "Passionate tech writer covering AI and web development."),
-        ("Priya Patel", "priya_patel", "priya@blogverse.com", "Lifestyle blogger sharing tips for modern living."),
-        ("Rahul Gupta", "rahul_gupta", "rahul@blogverse.com", "Fitness enthusiast helping others live healthier lives."),
-        ("Sneha Reddy", "sneha_reddy", "sneha@blogverse.com", "Finance writer simplifying investment for beginners."),
-        ("Vikram Singh", "vikram_singh", "vikram@blogverse.com", "Education advocate and lifelong learner."),
-        ("Ananya Iyer", "ananya_iyer", "ananya@blogverse.com", "Travel writer exploring hidden gems across the world."),
-        ("Karthik Nair", "karthik_nair", "karthik@blogverse.com", "Food lover and home cook sharing delicious recipes."),
-        ("Meera Joshi", "meera_joshi", "meera@blogverse.com", "Entertainment critic reviewing movies and shows."),
-        ("Aditya Kumar", "aditya_kumar", "aditya@blogverse.com", "Full-stack developer sharing coding tutorials."),
-        ("Divya Menon", "divya_menon", "divya@blogverse.com", "Wellness coach writing about mindfulness and self-care."),
-        ("Rohan Das", "rohan_das", "rohan@blogverse.com", "Crypto enthusiast analyzing market trends."),
-        ("Ishita Banerjee", "ishita_banerjee", "ishita@blogverse.com", "Solo traveler documenting adventures."),
-        ("Sanjay Verma", "sanjay_verma", "sanjay@blogverse.com", "Science communicator making complex topics accessible."),
-        ("Nisha Kumari", "nisha_kumari", "nisha@blogverse.com", "Interior designer sharing home decor ideas."),
-        ("Amit Tiwari", "amit_tiwari", "amit@blogverse.com", "Language enthusiast exploring how words shape thought."),
+        ("Arjun Sharma", "arjun_sharma", "arjun@bcps.com", "Passionate tech writer covering AI and web development."),
+        ("Priya Patel", "priya_patel", "priya@bcps.com", "Lifestyle blogger sharing tips for modern living."),
+        ("Rahul Gupta", "rahul_gupta", "rahul@bcps.com", "Fitness enthusiast helping others live healthier lives."),
+        ("Sneha Reddy", "sneha_reddy", "sneha@bcps.com", "Finance writer simplifying investment for beginners."),
+        ("Vikram Singh", "vikram_singh", "vikram@bcps.com", "Education advocate and lifelong learner."),
+        ("Ananya Iyer", "ananya_iyer", "ananya@bcps.com", "Travel writer exploring hidden gems across the world."),
+        ("Karthik Nair", "karthik_nair", "karthik@bcps.com", "Food lover and home cook sharing delicious recipes."),
+        ("Meera Joshi", "meera_joshi", "meera@bcps.com", "Entertainment critic reviewing movies and shows."),
+        ("Aditya Kumar", "aditya_kumar", "aditya@bcps.com", "Full-stack developer sharing coding tutorials."),
+        ("Divya Menon", "divya_menon", "divya@bcps.com", "Wellness coach writing about mindfulness and self-care."),
+        ("Rohan Das", "rohan_das", "rohan@bcps.com", "Crypto enthusiast analyzing market trends."),
+        ("Ishita Banerjee", "ishita_banerjee", "ishita@bcps.com", "Solo traveler documenting adventures."),
+        ("Sanjay Verma", "sanjay_verma", "sanjay@bcps.com", "Science communicator making complex topics accessible."),
+        ("Nisha Kumari", "nisha_kumari", "nisha@bcps.com", "Interior designer sharing home decor ideas."),
+        ("Amit Tiwari", "amit_tiwari", "amit@bcps.com", "Language enthusiast exploring how words shape thought."),
     ]
 
     authors = []
@@ -88,11 +88,11 @@ def seed_db():
 
     # ─── 4. Create 5 Readers ────────────────────────────────────
     reader_data = [
-        ("Ravi Reader", "ravi_reader", "ravi@blogverse.com"),
-        ("Sita Sharma", "sita_sharma", "sita@blogverse.com"),
-        ("Mohan Mehta", "mohan_mehta", "mohan@blogverse.com"),
-        ("Kavita Kapoor", "kavita_kapoor", "kavita@blogverse.com"),
-        ("Deepak Dubey", "deepak_dubey", "deepak@blogverse.com"),
+        ("Ravi Reader", "ravi_reader", "ravi@bcps.com"),
+        ("Sita Sharma", "sita_sharma", "sita@bcps.com"),
+        ("Mohan Mehta", "mohan_mehta", "mohan@bcps.com"),
+        ("Kavita Kapoor", "kavita_kapoor", "kavita@bcps.com"),
+        ("Deepak Dubey", "deepak_dubey", "deepak@bcps.com"),
     ]
     readers = []
     for name, username, email in reader_data:
@@ -346,16 +346,16 @@ def seed_db():
         if not tbl_notifications.objects.filter(user_id=user, notification_type='system').exists():
             tbl_notifications(
                 user_id=user,
-                title="Welcome to Blogverse!",
-                message=f"Welcome {user.name}! Explore amazing content on Blogverse.",
+                title="Welcome to the Blogging and Content Publishing System!",
+                message=f"Welcome {user.name}! Explore amazing content on our platform.",
                 notification_type='system'
             ).save()
 
     print(f"\n{'=' * 60}")
     print("  SEEDING COMPLETE!")
-    print(f"  Admin Login: admin@blogverse.com / admin123")
-    print(f"  Author Login: arjun@blogverse.com / password123")
-    print(f"  Reader Login: ravi@blogverse.com / password123")
+    print(f"  Admin Login: admin@bcps.com / admin123")
+    print(f"  Author Login: arjun@bcps.com / password123")
+    print(f"  Reader Login: ravi@bcps.com / password123")
     print(f"{'=' * 60}")
 
 

@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Join Blogverse - Create your account and start publishing or reading amazing content.">
-    <title>Create Account — Blogverse</title>
+        content="Join the Blogging and Content Publishing System - Create your account and start publishing or reading amazing content.">
+    <title>Create Account — Blogging and Content Publishing System</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -17,10 +17,13 @@
         <div class="auth-card animate-fadeInUp" style="max-width:480px;">
             <a href="/" class="navbar-brand" style="justify-content:center;margin-bottom:32px;">
                 <div class="brand-icon">B</div>
-                Blog<span class="highlight">verse</span>
+                <div class="brand-text">
+                    <span class="brand-text-main">Blogging &amp; Content</span>
+                    <span class="brand-text-sub highlight">Publishing System</span>
+                </div>
             </a>
             <h1>Create Account</h1>
-            <p class="subtitle">Join the Blogverse community today</p>
+            <p class="subtitle">Join the community today</p>
 
             {% if error %}
             <div class="alert alert-error">

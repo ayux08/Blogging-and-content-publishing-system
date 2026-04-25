@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Admin{% endblock %} — BlogSphere</title>
+    <title>{% block title %}Admin{% endblock %} — Blogging and Content Publishing System</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -17,9 +17,9 @@
             <div class="admin-sidebar-brand">
                 <a href="/admin_zone/">
                     <div class="brand-icon">B</div>
-                    <div>
-                        Blog<span class="highlight">Sphere</span>
-                        <span class="brand-sub">Blog Portal</span>
+                    <div class="brand-text">
+                        <span class="brand-text-main">Blogging &amp; Content</span>
+                        <span class="brand-text-sub highlight">Publishing System</span>
                     </div>
                 </a>
             </div>
@@ -84,7 +84,7 @@
             <header class="admin-topbar">
                 <div class="admin-topbar-left">
                     <span class="admin-topbar-title">{% block topbar_title %}Admin Dashboard{% endblock %}</span>
-                    <span class="admin-topbar-breadcrumb">{% block topbar_breadcrumb %}/ BlogSphere{% endblock %}</span>
+                    <span class="admin-topbar-breadcrumb">{% block topbar_breadcrumb %}/ Blogging &amp; Content Publishing System{% endblock %}</span>
                 </div>
                 <div class="admin-topbar-right">
                     <button class="admin-topbar-btn" title="Search"><i class="fas fa-search"></i></button>
@@ -99,7 +99,7 @@
                 {% block content %}{% endblock %}
             </main>
             <div style="padding:12px 28px;text-align:center;font-size:0.78rem;color:var(--text-muted);border-top:1px solid var(--border-color);">
-                &copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong> · Blogging & Content Publishing System
+                &copy; 2026 Blogging and Content Publishing System. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong>
             </div>
         </div>
     </div>

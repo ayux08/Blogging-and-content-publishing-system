@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Reader{% endblock %} — Blogverse</title>
+    <title>{% block title %}Reader{% endblock %} — Blogging and Content Publishing System</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -16,7 +16,10 @@
         <div class="navbar-inner">
             <a href="/reader/" class="navbar-brand">
                 <div class="brand-icon">B</div>
-                Blog<span class="highlight">verse</span>
+                <div class="brand-text">
+                    <span class="brand-text-main">Blogging &amp; Content</span>
+                    <span class="brand-text-sub highlight">Publishing System</span>
+                </div>
             </a>
             <ul class="navbar-nav">
                 <li><a href="/reader/" class="{% if page == 'dashboard' %}active{% endif %}"><i class="fas fa-home"></i>
@@ -73,7 +76,8 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-bottom" style="padding:18px 0;">
-                <span>&copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong></span>
+                <span>&copy; 2026 Blogging and Content Publishing System. Created and Developed by <strong
+                        style="color:var(--primary-light);">Ayush</strong></span>
                 <span>Blogging & Content Publishing System</span>
             </div>
         </div>

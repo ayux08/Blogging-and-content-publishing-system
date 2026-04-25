@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Blogverse - A modern blogging and content publishing platform. Create, share, and discover amazing stories.">
-    <title>Blogverse — Discover Amazing Stories</title>
+        content="Blogging and Content Publishing System - Create, share, and discover amazing stories.">
+    <title>Blogging and Content Publishing System — Discover Amazing Stories</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -24,7 +24,10 @@
             <div class="navbar-inner">
                 <a href="/" class="navbar-brand">
                     <div class="brand-icon">B</div>
-                    Blog<span class="highlight">verse</span>
+                    <div class="brand-text">
+                        <span class="brand-text-main">Blogging &amp; Content</span>
+                        <span class="brand-text-sub highlight">Publishing System</span>
+                    </div>
                 </a>
                 <ul class="navbar-nav">
                     <li><a href="#featured">Explore</a></li>
@@ -40,7 +43,7 @@
 
         <div class="hero-content animate-fadeInUp">
             <h1>Share Your Story<br>with the <span>World</span></h1>
-            <p>Blogverse is a modern content publishing platform where creators write, readers discover, and ideas come
+            <p>The Blogging and Content Publishing System is a modern platform where creators write, readers discover, and ideas come
                 alive.</p>
             <div class="hero-buttons">
                 <a href="/accounts/register/" class="btn btn-primary btn-lg">
@@ -112,7 +115,7 @@
             <div class="empty-state">
                 <div class="icon"><i class="fas fa-pen-nib"></i></div>
                 <h3>No posts yet</h3>
-                <p>Be the first one to publish amazing content on Blogverse!</p>
+                <p>Be the first one to publish amazing content on the platform!</p>
                 <a href="/accounts/register/" class="btn btn-primary mt-2">Start Writing</a>
             </div>
             {% endif %}
@@ -169,8 +172,11 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <h3>Blog<span style="color:var(--primary-light)">verse</span></h3>
-                    <p>A modern blogging and content publishing platform built for creators, editors, and readers.</p>
+                    <h3 class="brand-text">
+                        <span class="brand-text-main">Blogging &amp; Content</span>
+                        <span class="brand-text-sub" style="color:var(--primary-light);">Publishing System</span>
+                    </h3>
+                    <p style="margin-top: 10px;">A modern blogging platform built for creators, editors, and readers.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Platform</h4>
@@ -197,7 +203,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>&copy; 2026 Blogverse. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong></span>
+                <span>&copy; 2026 Blogging and Content Publishing System. Created and Developed by <strong style="color:var(--primary-light);">Ayush</strong></span>
                 <span>Blogging & Content Publishing System</span>
             </div>
         </div>

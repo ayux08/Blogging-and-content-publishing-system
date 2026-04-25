@@ -281,6 +281,23 @@ p {
     text-decoration: none;
 }
 
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+}
+
+.brand-text-main {
+    font-size: 1.1rem;
+    line-height: 1.1;
+}
+
+.brand-text-sub {
+    font-size: 0.85rem;
+    line-height: 1.1;
+}
+
 .navbar-brand .brand-icon {
     width: 36px;
     height: 36px;
