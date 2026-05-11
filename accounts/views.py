@@ -147,7 +147,7 @@ def login_view(request):
 
 
 def register_view(request):
-    """6.2.1 / 6.3.1 - Registration for authors and readers."""
+    """ Registration for authors and readers."""
     if request.session.get('user_id'):
         return redirect('/reader/')
 

@@ -41,10 +41,6 @@ def translate(request):
     return render(request, "ai/translate.html", ctx)
 
 
-# ═══════════════════════════════════════════════════════════════
-#  Helper: call Groq API (free, fast LLM inference)
-#  Docs: https://console.groq.com/docs/api-reference
-# ═══════════════════════════════════════════════════════════════
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
