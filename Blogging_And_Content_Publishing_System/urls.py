@@ -1,5 +1,5 @@
 """
-URL configuration for Blogverse project.
+URL configuration for Blogging and Content Publishing System.
 """
 from django.contrib import admin
 from django.urls import path, include

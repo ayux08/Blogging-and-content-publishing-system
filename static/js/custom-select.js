@@ -1,5 +1,5 @@
 /**
- * Custom Select Dropdown — Blogverse
+ * Custom Select Dropdown — Blogging and Content Publishing System
  * Replaces all native <select> elements with fully stylable custom dropdowns.
  * The hidden native <select> is kept in the DOM for form submissions.
  * Uses portal approach: options panel is appended to document.body to avoid

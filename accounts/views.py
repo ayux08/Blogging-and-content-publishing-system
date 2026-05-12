@@ -191,8 +191,8 @@ def register_view(request):
         request.session['user_username'] = user.username
 
         # Welcome notification
-        tbl_notifications(user_id=user, title="Welcome to Blogverse!",
-                          message=f"Welcome {name}! Start exploring amazing content on Blogverse.",
+        tbl_notifications(user_id=user, title="Welcome to Blogging and Content Publishing System!",
+                          message=f"Welcome {name}! Start exploring amazing content on our platform.",
                           notification_type='system').save()
 
         if role == 'author':

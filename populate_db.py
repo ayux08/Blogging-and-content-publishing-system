@@ -2,7 +2,7 @@ import os
 import django
 import random
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "blogverse_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Blogging_And_Content_Publishing_System.settings")
 django.setup()
 
 from accounts.models import tbl_user, tbl_notifications
