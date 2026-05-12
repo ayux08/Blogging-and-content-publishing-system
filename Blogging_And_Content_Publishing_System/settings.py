@@ -1,5 +1,5 @@
 """
-Django settings for Blogging and Content Publishing System.
+Django settings for Blogverse project.
 """
 
 from pathlib import Path
@@ -9,10 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = BASE_DIR / "templates"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bcps-x9k2m#p4v8q!r7&w5z3a1n6j0f$h@t%y+e8c'
+SECRET_KEY = 'django-insecure-blogverse-x9k2m#p4v8q!r7&w5z3a1n6j0f$h@t%y+e8c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -40,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Blogging_And_Content_Publishing_System.urls'
+ROOT_URLCONF = 'blogverse_project.urls'
 
 TEMPLATES = [
     {
@@ -57,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Blogging_And_Content_Publishing_System.wsgi.application'
+WSGI_APPLICATION = 'blogverse_project.wsgi.application'
 
 # Database
 DATABASES = {
@@ -83,6 +84,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+import os
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_DIR = BASE_DIR / "static"
 STATICFILES_DIRS = [STATIC_DIR]
 
