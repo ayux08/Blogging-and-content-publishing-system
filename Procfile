@@ -1,0 +1,1 @@
+web: gunicorn Blogging_And_Content_Publishing_System.wsgi:application

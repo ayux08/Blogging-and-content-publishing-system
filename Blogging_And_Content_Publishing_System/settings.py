@@ -1,20 +1,34 @@
 """
-Django settings for Blogverse project.
+Django settings for Blogging and Content Publishing System.
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+import dj_database_url
+
+# Load .env file for local development
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = BASE_DIR / "templates"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-blogverse-x9k2m#p4v8q!r7&w5z3a1n6j0f$h@t%y+e8c'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-blogverse-x9k2m#p4v8q!r7&w5z3a1n6j0f$h@t%y+e8c'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() != 'false'
 
 ALLOWED_HOSTS = ['*']
+
+# Trust the Render domain for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if origin
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -61,11 +75,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Blogging_And_Content_Publishing_System.wsgi.application'
 
 # Database
+# Uses DATABASE_URL env var in production (Neon PostgreSQL)
+# Falls back to SQLite for local development
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+    )
 }
 
 # Password validation
@@ -84,12 +100,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-import os
-
-STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 STATIC_DIR = BASE_DIR / "static"
 STATICFILES_DIRS = [STATIC_DIR]
 

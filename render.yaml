@@ -1,0 +1,26 @@
+# Render Blueprint — optional, for one-click deploy
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: blogging-system
+    runtime: python
+    buildCommand: bash build.sh
+    startCommand: gunicorn Blogging_And_Content_Publishing_System.wsgi:application
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        sync: false  # You must set this manually from Neon.tech
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false  # Set to https://your-app-name.onrender.com
+      - key: SUMMARIZER_API_KEY
+        sync: false
+      - key: TRANSLATOR_API_KEY
+        sync: false
+      - key: SUMMARIZER_MODEL
+        value: "llama-3.1-8b-instant"
+      - key: TRANSLATOR_MODEL
+        value: "llama-3.1-8b-instant"
