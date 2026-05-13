@@ -16,6 +16,31 @@ class tbl_user(models.Model):
     def __str__(self):
         return f"{self.name} ({self.role})"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Auto-sync admin users to Django's auth system for /admin/ panel access
+        if self.role == 'admin':
+            from django.contrib.auth.models import User
+            django_user, created = User.objects.get_or_create(
+                username=self.username,
+                defaults={
+                    'email': self.email,
+                    'is_staff': True,
+                    'is_superuser': True,
+                    'first_name': self.name,
+                }
+            )
+            if created:
+                django_user.set_password(self.password)
+                django_user.save()
+            else:
+                # Update password and ensure staff/superuser flags
+                django_user.set_password(self.password)
+                django_user.is_staff = True
+                django_user.is_superuser = True
+                django_user.email = self.email
+                django_user.save()
+
 
 class tbl_contact(models.Model):
     """Contact form submissions."""
