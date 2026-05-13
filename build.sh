@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Render build script — runs on every deploy
 set -o errexit
 
 echo "==> Installing dependencies..."
